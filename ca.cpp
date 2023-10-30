@@ -16,10 +16,6 @@ using namespace std;
 // All possible state patterns
 vector<vector<int> > states = { { 1, 1, 1 }, { 1, 1, 0 }, { 1, 0, 1 }, { 1, 0, 0 }, { 0, 1, 1 }, { 0, 1, 0 }, { 0, 0, 1 }, { 0, 0, 0} };
 
-
-// FOR 1 DIMENSIONAL CELLULAR AUTOMATION:
-
-// a void function to display set rule 30
 void setRule30Display(vector<int> state) {
     cout << "\t\t";
     for (int i = 0; i < LENGTH; i++) {
@@ -34,7 +30,6 @@ void setRule30Display(vector<int> state) {
     cout << "\n"; // to print a line
 }
 
-// a void function to perform set rule 30 in 1d
 void setRule30() {
     cout << "For set rule 30: " << endl;
 
@@ -51,9 +46,9 @@ void setRule30() {
     // To initialise the state as vectors
     vector<int> currentState(LENGTH);
     vector<int> updateState(LENGTH);
-    currentState[(LENGTH) / 2 -1] = 1;
+    currentState[(LENGTH) / 2 - 1] = 1;
 
-    setRule30Display(currentState); // to display the first line by calling the function setRule30Display
+    setRule30Display(currentState); // to display the first line
 
     int i;
     for (i=0; i<reps-1; i++) {
