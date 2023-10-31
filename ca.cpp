@@ -9,14 +9,19 @@ Lucy Thomson 2505312
 #include <string>
 #include <vector>
 #include <stdint.h>
+#include <cmath>
 
 #define LENGTH 50
 
 using namespace std;
 
 // All possible state patterns
-// vector<vector<int> > states = { { 1, 1, 1 }, { 1, 1, 0 }, { 1, 0, 1 }, { 1, 0, 0 }, { 0, 1, 1 }, { 0, 1, 0 }, { 0, 0, 1 }, { 0, 0, 0} };
+//vector<vector<int> > states = { { 1, 1, 1 }, { 1, 1, 0 }, { 1, 0, 1 }, { 1, 0, 0 }, { 0, 1, 1 }, { 0, 1, 0 }, { 0, 0, 1 }, { 0, 0, 0} };
 
+
+// FOR 1 DIMENSIONAL CELLULAR AUTOMATION:
+
+// a void function to display set rule 30
 void setRule30Display(vector<int> state) {
     cout << "\t\t";
     for (int i = 0; i < LENGTH; i++) {
@@ -62,10 +67,10 @@ void setRule30(bool isWrap) {
             
 
             /*
-                 x x x
-                   O   <- each j is looking at the top 3 to valuate what it should be next
+                x x x
+                O   <- each j is looking at the top 3 to valuate what it should be next
             */
-            int s1, s2, s3; 
+            int s1, s2, s3;
             if (isWrap == 1) {
                 if (j == 0) {
                     s1 = currentState[LENGTH-1]; // will look at the value on the other end of the state
@@ -123,28 +128,84 @@ int toBinary(int decNum) {
     for (i=count-1; i>= 0; i--) {
         cout << binaryNumArray[i]; // to print the array of binary numbers
     }
+    
+    return 0;
+}
+
+// Function to convert a binary number to a decimal number
+int toDecimal(int binaryNum) {
+    //int num = binaryNum;
+    int decimal = 0;
+    int base = 1;
+    int temp = binaryNum;
+    while (temp) {
+        int last = temp % 10;
+        temp = temp/10;
+        decimal += last * base;
+        base = base * 2;
+    }
+    cout << decimal << endl;
+
     return 0;
 }
 
 
 // The driver function:
-int main() {
-    bool isWrap = false;
-
-    cout << "Would you like the pattern to wrap around? (Y/N) ";
-    string input;
-    cin >> input;
-    if (input.compare("y") == 0 || input.compare("Y") == 0 || input.compare("yes") == 0 || input.compare("Yes") == 0) {
+void menu() {
+    cout << "Menu \n";
+    cout << "1. Generate set rule 30 \n";
+    cout << "2. Generate a set rule of your choice \n";
+    cout << "3. Generate a random set rule \n";
+    cout << "4. Convert from decimal to binary \n";
+    cout << "5. Convert from binary to decimal \n";
+    cout << "Enter your choice: \n";
+    int choice;
+    cin >> choice;
+    if (choice == 1) {
+        // If the user chose option 1
+        bool isWrap = false;
+        cout << "Would you like the pattern to wrap around? (Y/N) ";
+        string input;
+        cin >> input;
+        if (input.compare("y") == 0 || input.compare("Y") == 0 || input.compare("yes") == 0 || input.compare("Yes") == 0) {
         isWrap = true;
+        }
+        // To display cellular automation for the set rule 30
+        setRule30(isWrap);
+        cout << "\n";
+    } else if (choice == 2) {
+        // If the user chose option 2
+    } else if (choice == 3) {
+        // If the user chose option 3
+    } else if (choice == 4) {
+        // If the user chose option 4
+        int num;
+        cout << "Enter a decimal number that you want to convert into binary: ";
+        cin >> num;
+        toBinary(num);
+        cout << "\n";
+    } else if (choice == 5) {
+        // If the user chose option 5
+        int binaryNum;
+        cout << "Enter a binary number: ";
+        cin >> binaryNum;
+        toDecimal(binaryNum);
+    } else {
+        cout << "Invalid choice";
     }
-    
-    // To display cellular automation for the set rule 30
-    setRule30(isWrap);
+}
 
-    cout << "\n";
-
-    // To display a decimal in its binary form
-    // toBinary(10);
-
+int main() {
+    bool x = true;
+    while (x == true) {
+        menu();
+        char exit;
+        cout << "Would you like to choose another menu option (y/n): ";
+        cin >> exit;
+        if (exit == 'n') {
+            // If the user wants to exit the menu
+            x = false;
+        }
+    }
     return 0;
 }
