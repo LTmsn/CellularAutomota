@@ -2,6 +2,7 @@
 /*
 Group K
 Lirit Dampier 2560877
+Lucy Thomson 2505312
 */
 
 #include <iostream>
@@ -9,12 +10,12 @@ Lirit Dampier 2560877
 #include <vector>
 #include <stdint.h>
 
-#define LENGTH 31
+#define LENGTH 50
 
 using namespace std;
 
 // All possible state patterns
-vector<vector<int> > states = { { 1, 1, 1 }, { 1, 1, 0 }, { 1, 0, 1 }, { 1, 0, 0 }, { 0, 1, 1 }, { 0, 1, 0 }, { 0, 0, 1 }, { 0, 0, 0} };
+// vector<vector<int> > states = { { 1, 1, 1 }, { 1, 1, 0 }, { 1, 0, 1 }, { 1, 0, 0 }, { 0, 1, 1 }, { 0, 1, 0 }, { 0, 0, 1 }, { 0, 0, 0} };
 
 void setRule30Display(vector<int> state) {
     cout << "\t\t";
@@ -30,7 +31,7 @@ void setRule30Display(vector<int> state) {
     cout << "\n"; // to print a line
 }
 
-void setRule30() {
+void setRule30(bool isWrap) {
     cout << "For set rule 30: " << endl;
 
     int reps;
@@ -56,13 +57,36 @@ void setRule30() {
 
         updateState.assign(LENGTH, 0); // to erase the old state
 
-        int j;
-        for (j=1; j<LENGTH -1; j++) {
+        for (int j=0; j<LENGTH; j++) {
             // for the total length:
+            
 
-            int s1 = currentState[j-1];
-            int s2 = currentState[j];
-            int s3 = currentState[j+1];
+            /*
+                 x x x
+                   O   <- each j is looking at the top 3 to valuate what it should be next
+            */
+            int s1, s2, s3; 
+            if (isWrap == 1) {
+                if (j == 0) {
+                    s1 = currentState[LENGTH-1]; // will look at the value on the other end of the state
+                }
+                else s1 = currentState[j-1];
+
+                s2 = currentState[j];
+                
+                if (j == LENGTH-1) {
+                    s3 = currentState[0]; // will look at the value on the start of the state
+                }
+                else s3 = currentState[j+1];
+                
+            }
+            else {
+                s1 = currentState[j-1];
+                s2 = currentState[j];
+                s3 = currentState[j+1];
+            }
+
+            
 
             // to create an array for just the current pattern
             vector<int> current;
@@ -105,13 +129,22 @@ int toBinary(int decNum) {
 
 // The driver function:
 int main() {
+    bool isWrap = false;
+
+    cout << "Would you like the pattern to wrap around? (Y/N) ";
+    string input;
+    cin >> input;
+    if (input.compare("y") == 0 || input.compare("Y") == 0 || input.compare("yes") == 0 || input.compare("Yes") == 0) {
+        isWrap = true;
+    }
+    
     // To display cellular automation for the set rule 30
-    setRule30();
+    setRule30(isWrap);
 
     cout << "\n";
 
     // To display a decimal in its binary form
-    toBinary(10);
+    // toBinary(10);
 
     return 0;
 }
