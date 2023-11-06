@@ -13,6 +13,7 @@ Ahmid Omarzada 2527809
 #include <stdint.h>
 #include <bitset>
 #include <limits>
+#include <fstream>
 
 #define LENGTH 50
 
@@ -56,6 +57,14 @@ void setRule30(bool isWrap) {
         cin >> reps;
     }
 
+    ofstream saveFile;
+    string isSave = "";
+    cout << "Would you like to save this? (y/n) ";
+    cin >> isSave;
+    if (isSave.compare("y") == 0 || isSave.compare("Y") == 0 || isSave.compare("yes") == 0 || isSave.compare("Yes") == 0) {
+        saveFile.open("Cellular-Automata.txt");
+    }
+
     // To initialise the state as vectors
     vector<int> currentState(LENGTH);
     vector<int> updateState(LENGTH);
@@ -75,7 +84,7 @@ void setRule30(bool isWrap) {
 
             /*
                 x x x
-                O   <- each j is looking at the top 3 to valuate what it should be next
+                  O   <- each j is looking at the top 3 to valuate what it should be next
             */
             int s1, s2, s3;
             if (isWrap == 1) {
@@ -113,7 +122,24 @@ void setRule30(bool isWrap) {
         // assign() assigns new values to the vector by replacing old ones
         currentState.assign(updateState.begin(), updateState.end()); // to update the current state
         setRuleDisplay(currentState); // to display the current state
+
+        if (isSave.compare("y") == 0 || isSave.compare("Y") == 0 || isSave.compare("yes") == 0 || isSave.compare("Yes") == 0) {
+            saveFile << "\t\t";
+            for (int i = 0; i < LENGTH; i++) {
+                // for the length (set length)
+                if (currentState[i] == 1) {
+                    // if the current state is a one then print an x
+                    saveFile <<"x";}
+                else if (currentState[i] == 0) {
+                    // if the current state is zero then print a space
+                    saveFile <<" "; }
+            }
+            saveFile << "\n";
+        }
+
+
     }
+    saveFile.close();
 }
 
 
@@ -156,7 +182,7 @@ int toDecimal(int binaryNum) {
 }
 
 // function for the set rule of the user's choice or random
-void setRule(int rule) {
+void setRule(int rule, bool isWrap) {
     int reps;
     // Ask the user how many repetitions they want:
     cout << "How many repetitions: ";
@@ -167,10 +193,18 @@ void setRule(int rule) {
         cin >> reps;
     }
 
+    ofstream saveFile;
+    string isSave = "";
+    cout << "Would you like to save this? (y/n) ";
+    cin >> isSave;
+    if (isSave.compare("y") == 0 || isSave.compare("Y") == 0 || isSave.compare("yes") == 0 || isSave.compare("Yes") == 0) {
+        saveFile.open("Cellular-Automata.txt");
+    }
+
     std::bitset<8> ruleBinary(rule);
     std::cout << ruleBinary << endl;
     string ruleBinaryString = ruleBinary.to_string();
-    cout << ruleBinaryString[1];
+    cout << ruleBinaryString[1] << endl;
 
     // Initialize the state as vectors
     vector<int> currentState(LENGTH);
@@ -187,9 +221,26 @@ void setRule(int rule) {
         for (int j = 1; j < LENGTH - 1; j++) {
             // Loop for the total length:
 
-            int s1 = currentState[j - 1];
-            int s2 = currentState[j];
-            int s3 = currentState[j + 1];
+            int s1, s2, s3;
+            if (isWrap == 1) {
+                if (j == 0) {
+                    s1 = currentState[LENGTH-1]; // will look at the value on the other end of the state
+                }
+                else s1 = currentState[j-1];
+
+                s2 = currentState[j];
+                
+                if (j == LENGTH-1) {
+                    s3 = currentState[0]; // will look at the value on the start of the state
+                }
+                else s3 = currentState[j+1];
+                
+            }
+            else {
+                s1 = currentState[j-1];
+                s2 = currentState[j];
+                s3 = currentState[j+1];
+            }
 
             // Create an array for the current pattern
             vector<int> current;
@@ -245,7 +296,27 @@ void setRule(int rule) {
         // Assign new values to the vector by replacing old ones
         currentState = updateState;
         setRuleDisplay(currentState); // Display the current state
-    }
+
+
+        // <-- This used to be a seperate func but for the love of god it will not work with pointers for some reason
+        if (isSave.compare("y") == 0 || isSave.compare("Y") == 0 || isSave.compare("yes") == 0 || isSave.compare("Yes") == 0) {
+            saveFile << "\t\t";
+            for (int i = 0; i < LENGTH; i++) {
+                // for the length (set length)
+                if (currentState[i] == 1) {
+                    // if the current state is a one then print an x
+                    saveFile <<"x";}
+                else if (currentState[i] == 0) {
+                    // if the current state is zero then print a space
+                    saveFile <<" "; }
+            }
+            saveFile << "\n";
+        }
+        // <-- sorry for the extra repeated lines :/
+
+
+    } 
+    saveFile.close();
 }
 
 // Function to initialize the grid with random values
@@ -443,9 +514,16 @@ void menu() {
         int rule;
         cout << "Enter a set rule: ";
         cin >> rule;
+        bool isWrap = false;
+        cout << "Would you like the pattern to wrap around? (Y/N) ";
+        string input;
+        cin >> input;
+        if (input.compare("y") == 0 || input.compare("Y") == 0 || input.compare("yes") == 0 || input.compare("Yes") == 0) {
+        isWrap = true;
+        }
         // rule must be 0-255
         if ((rule > 0) && (rule < 256)) {
-            setRule(rule);
+            setRule(rule, isWrap);
         } else {
             cout << "The rule must be in the range of 0-255";
         }
@@ -453,7 +531,14 @@ void menu() {
     } else if (choice == 3) {
         // If the user chose option 3
         int random = 1 + (rand() % 256); // to generate a random number between 1 and 99
-        setRule(random);
+        bool isWrap = false;
+        cout << "Would you like the pattern to wrap around? (Y/N) ";
+        string input;
+        cin >> input;
+        if (input.compare("y") == 0 || input.compare("Y") == 0 || input.compare("yes") == 0 || input.compare("Yes") == 0) {
+        isWrap = true;
+        }
+        setRule(random, isWrap);
     } else if (choice == 4) {
         // If the user chose option 4
         int num;
